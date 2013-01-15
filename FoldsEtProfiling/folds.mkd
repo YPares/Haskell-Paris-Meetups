@@ -18,7 +18,7 @@ Si compilateur capable de *Tail Call Optimization*, la récursion **terminale** 
 
 ## Inconvénients généraux des boucles
 
-- Éléments syntaxiques spéciaux (*for*, *while*, *for in*, *list comprehensions*...) : capacités limitées par le langage
+- Éléments syntaxiques spéciaux ( *for*, *while*, *for in*, *list comprehensions*...) : capacités limitées par le langage
 - Les boucles ne sont pas composables
 - Une boucle spécifique n'est pas réutilisable
 - Pas utilisables pour créer des abstractions
@@ -28,7 +28,7 @@ Si compilateur capable de *Tail Call Optimization*, la récursion **terminale** 
 \pause{}
 
 ### Conséquences :
-- Toute abstraction d'un patron (*pattern*) donné de répétition ou d'itération doit être assumée par les développeurs du langage.
+- Toute abstraction d'un patron ( *pattern* ) donné de répétition ou d'itération doit être assumée par les développeurs du langage.
 - Créer une nouvelle abstraction nécessite de modifier le langage.
 
 ## Inconvénients de la récursion dans les langages impératifs
@@ -43,7 +43,7 @@ Mais récursion plus *formelle* et plus expressive que boucles.
 
 ## Un peu de démystification :
 
-*"Haskell fans are funny. They pride themselves that Haskell has no while-loops [...] They tell you to define **everything** using recursive functions [...]"*
+_"Haskell fans are funny. They pride themselves that Haskell has no while-loops [...] They tell you to define **everything** using recursive functions [...]"_
 
 -- Guido van Rossum\footnote{https://plus.google.com/u/0/115212051037621986145/posts/9bQZudT42Gx}.
 
