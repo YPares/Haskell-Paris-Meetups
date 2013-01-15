@@ -5,10 +5,10 @@
 ## Rappels : boucles & récursion
 
 ### 2 types de récursion :
-- terminale : seul l'appel _terminal_ construit un résultat, les autres ne font que renvoyer le résultat de l'appel récursif
+- terminale : seul l'appel *terminal* construit un résultat, les autres ne font que renvoyer le résultat de l'appel récursif
 - non terminale : les appels non terminaux réutilisent le résultat de l'appel récursif
 
-Si compilateur capable de _Tail Call Optimization_, la récursion **terminale** se fait en espace mémoire constant (vs. _linéaire_), comme une boucle.
+Si compilateur capable de *Tail Call Optimization*, la récursion **terminale** se fait en espace mémoire constant (vs. *linéaire*), comme une boucle.
 
 \pause{}
 
@@ -18,7 +18,7 @@ Si compilateur capable de _Tail Call Optimization_, la récursion **terminale** 
 
 ## Inconvénients généraux des boucles
 
-- Éléments syntaxiques spéciaux (_for_, _while_, _for in_, _list comprehensions_...) : capacités limitées par le langage
+- Éléments syntaxiques spéciaux (*for*, *while*, *for in*, *list comprehensions*...) : capacités limitées par le langage
 - Les boucles ne sont pas composables
 - Une boucle spécifique n'est pas réutilisable
 - Pas utilisables pour créer des abstractions
@@ -28,22 +28,22 @@ Si compilateur capable de _Tail Call Optimization_, la récursion **terminale** 
 \pause{}
 
 ### Conséquences :
-- Toute abstraction d'un patron (_pattern_) donné de répétition ou d'itération doit être assumée par les développeurs du langage.
+- Toute abstraction d'un patron (*pattern*) donné de répétition ou d'itération doit être assumée par les développeurs du langage.
 - Créer une nouvelle abstraction nécessite de modifier le langage.
 
 ## Inconvénients de la récursion dans les langages impératifs
 
-- Pour être réellement utile, nécessite le support natif des _closures_ : fonctions de première classe (fonctions sont des valeurs) ou "blocs" de code
+- Pour être réellement utile, nécessite le support natif des *closures* : fonctions de première classe (fonctions sont des valeurs) ou "blocs" de code
 - Syntaxe généralement mal adaptée : pas de fonctions anonymes ("lambdas") notamment
 
 ### Conséquence :
 Récursion souvent vue comme trop compliquée.
 
-Mais récursion plus _formelle_ et plus expressive que boucles.
+Mais récursion plus *formelle* et plus expressive que boucles.
 
 ## Un peu de démystification :
 
-_"Haskell fans are funny. They pride themselves that Haskell has no while-loops [...] They tell you to define **everything** using recursive functions [...]"_
+*"Haskell fans are funny. They pride themselves that Haskell has no while-loops [...] They tell you to define **everything** using recursive functions [...]"*
 
 -- Guido van Rossum\footnote{https://plus.google.com/u/0/115212051037621986145/posts/9bQZudT42Gx}.
 
@@ -73,15 +73,15 @@ sumList list = recur 0 list
 
 ## Un peu de démystification :
 
-- Le but est : d'écrire _une fois pour toutes_ un patron de récursion donné (sous forme d'une fonction) et de le réutiliser.
-- Donc, il est assez rare d'écrire une récursion _ad-hoc_ manuellement.
+- Le but est : d'écrire *une fois pour toutes* un patron de récursion donné (sous forme d'une fonction) et de le réutiliser.
+- Donc, il est assez rare d'écrire une récursion *ad-hoc* manuellement.
 - Pour ce faire, les closures et la syntaxe aident.
 
 ## Patrons de récursion les plus communs
 
 - **map** : transformer une collection en une autre ayant la même structure, en appliquant la même fonction à chaque élément
 - **filter** : transformer une collection en une autre ne contenant que les éléments satisfaisant un prédicat
-- **fold** (ou _reduce_) : "réduire" une collection en accumulant ses éléments dans une seule valeur (exemple : somme des éléments d'une liste)
+- **fold** (ou *reduce*) : "réduire" une collection en accumulant ses éléments dans une seule valeur (exemple : somme des éléments d'une liste)
 
 **fold** plus général : permet d'exprimer **map** et **filter** (dans ce cas, la valeur finale est elle-même une collection)
 
@@ -107,7 +107,7 @@ map f (x:xs) = (f x) : (map f xs)
 
 ### Rappels
 - Récursion **non** terminale => chaque appel peut construire une nouvelle valeur de retour, au lieu de renvoyer directement le résultat de l'appel récursif
-- Haskell : langage non-strict => pas nécessaire d'évaluer **toute** une expression si on ne veut qu'une _partie_ du résultat
+- Haskell : langage non-strict => pas nécessaire d'évaluer **toute** une expression si on ne veut qu'une *partie* du résultat
 
 \pause{}
 
@@ -117,8 +117,8 @@ map f (x:xs) = (f x) : (map f xs)
 ```
 
 - ```(map f xs)``` n'est pas calculé tant que seul ```(f x)``` nous intéresse.
-- La récursion est "mise en pause" => _guarded recursion_.
-- Avec récursion **terminale** : **map** consommerait _toute_ la liste en entrée avant de pouvoir renvoyer quoi que ce soit.
+- La récursion est "mise en pause" => *guarded recursion*.
+- Avec récursion **terminale** : **map** consommerait *toute* la liste en entrée avant de pouvoir renvoyer quoi que ce soit.
 
 ## _Fold_ sur une liste : deux versions en Haskell
 
@@ -140,7 +140,7 @@ Puisqu'en fait c'est la récursion **non** terminale qui est vachement mieux, à
 
 \pause{}
 
-=> Sert si résultat final _indivisible_, donc si liste en entrée doit _de toutes façons_ être consommée entièrement.
+=> Sert si résultat final *indivisible*, donc si liste en entrée doit *de toutes façons* être consommée entièrement.
 
 Exemple : pas possible de calculer une partie de la somme des éléments d'une liste.
 
@@ -152,7 +152,7 @@ sumList2 list = foldl (+) 0 list
 ## Profiling
 
 Outil utile (par exemple) pour savoir si on fait le bon type de récursion :
-le _profiler_.
+le *profiler*.
 
 ### Intérêt général
 - Enregistrer la consommation temps/mémoire lors de l'exécution
@@ -163,7 +163,7 @@ le _profiler_.
 \pause{}
 
 ### Terminologie
-"Partie" du programme = "_Cost Centre_" (un par fonction par ex., mais possible d'avoir granularité encore plus fine)
+"Partie" du programme = "*Cost Centre*" (un par fonction par ex., mais possible d'avoir granularité encore plus fine)
 
 ## Profiling
 
