@@ -6,3 +6,7 @@ Pandoc est également disponible sur Hackage (donc : ```cabal install pandoc``` 
 
 Et ensuite, on lance ./build-slides.sh et ça génère folds.pdf.
 
+# Voir le contenu des slides
+
+Comme github est stylé, et que mes slides sont en markdown, vous pouvez en afficher le contenu directement dans votre navigateur, en ouvrant folds.mkd
+(vous aurez juste les \pause{} de LaTeX affichés).
