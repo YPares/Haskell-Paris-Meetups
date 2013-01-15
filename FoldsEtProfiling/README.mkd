@@ -1,0 +1,8 @@
+# Compilation
+
+Pour compiler les slides, il faut d'abord installer pandoc (paquet du même nom sous Debian/Ubuntu).
+
+Pandoc est également disponible sur Hackage (donc : ```cabal install pandoc``` et zou).
+
+Et ensuite, on lance ./build-slides.sh et ça génère folds.pdf.
+
