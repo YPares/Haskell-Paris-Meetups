@@ -1,0 +1,20 @@
+%La programmation fonctionnelle, Haskell vous intéresse?
+%Mathieu Chataigner Yves Parès
+%Vendredi 29 Mars
+
+
+
+# La fin des objets
+
+Disclaimer :
+Rassurez-vous, nous ne parlerons pas de monades dans ce talk ;o)
+
+Dans cette présentation du langage Haskell, notre but sera de rester accessible tout en montrant ce qui peut rendre ce langage attractif et son utilisation efficace.
+
+Nous couvrirons les thèmes principaux de son paradigme. Nous vous montrerons : 
+- comment modéliser sans objets mutables grâce aux types de données algébriques et au pattern matching ;
+- quel intérêt peut avoir de séparer, via le système de typage, le code déterministe (« pur ») et le code à effets de bord (« impur ») tant du point de vue du développeur que de celui du compilateur ;
+- comment augmenter la ré-utilisabilité de son code avec les fonctions d’ordre supérieur ;
+- ce qu’apporte le modèle d’évaluation à la demande (« lazy ») de Haskell.
+
+Et tout cela au travers de quelques exemples en livecoding grâce à l’interpréteur ghci.
