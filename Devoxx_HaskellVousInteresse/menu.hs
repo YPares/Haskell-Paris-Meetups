@@ -1,4 +1,5 @@
 import Control.Monad
+import qualified Data.Map as TM
 
 
 totalMoney :: Int
@@ -23,7 +24,7 @@ type Money = Int
 
 data MenuItem = MenuItem { itemName :: Name,
                            itemPrice :: Money }
-    deriving (Show)
+    deriving (Show, Eq, Ord)
 
 newtype Menu = Menu { menuItems :: [MenuItem] }
     deriving (Show)
@@ -33,20 +34,22 @@ menuWithNewTypes = Menu [MenuItem "Mixed Fruit" 215,       MenuItem "French Frie
                          MenuItem "Side Salad" 335,        MenuItem "Hot Wings" 355,
                          MenuItem "Mozzarella Sticks" 420, MenuItem "Sampler Plate" 580]
 
-newtype Selection = Selection { selectionItems :: [MenuItem] }
+
+newtype Selection = Selection { selectionItems :: TM.Map MenuItem Int }
     deriving (Show)
 
 -- Fist we introduce some helpers to work with Selections (they will
 -- enhance the readability of the code that comes afterwards, and avoid the
 -- fact that everything is coming at once):
 
+emptySelection = Selection (TM.empty)
+
 -- | Little intro to pattern matching
-addToSelection newItem (Selection items) = Selection (newItem:items)
+addToSelection newItem (Selection items) = Selection (TM.insertWith (+) newItem 1 items)
 
 -- | Shows the fact that fields names can be used as functions
--- and that functions are composable with .
-selectionCost sel = sum (map itemPrice
-                             (selectionItems sel))
+selectionCost sel = sum (map (\(item, quantity) -> itemPrice item * quantity)
+                             (TM.toList (selectionItems sel)))
 
 -- No types given, so at this point we can show that the interpreter can
 -- infer the right types for addToSelection and selectionCost
@@ -61,7 +64,7 @@ firstSolution menu money =
                   (concat (map allSelectionsOfSize [0..]))   )
     where
         allSelectionsOfSize :: Int -> [Selection]
-        allSelectionsOfSize 0 = [Selection []]
+        allSelectionsOfSize 0 = [emptySelection]
         allSelectionsOfSize n =
             concat ( map (\item -> map (addToSelection item)
                                        (allSelectionsOfSize (n-1)))
@@ -78,7 +81,7 @@ secondSolution menu money =
             selectionCost sel == money ]
     where
         allSelectionsOfSize :: Int -> [Selection]
-        allSelectionsOfSize 0 = [Selection []]
+        allSelectionsOfSize 0 = [emptySelection]
         allSelectionsOfSize n =
             [ addToSelection item sel |
                 item <- menuItems menu,
@@ -95,7 +98,7 @@ thirdSolution menu predicate =
             predicate (selectionCost sel) ]  -- the only line that changes
     where
         allSelectionsOfSize :: Int -> [Selection]
-        allSelectionsOfSize 0 = [Selection []]
+        allSelectionsOfSize 0 = [emptySelection]
         allSelectionsOfSize n =
             [ addToSelection item sel |
                 item <- menuItems menu,
