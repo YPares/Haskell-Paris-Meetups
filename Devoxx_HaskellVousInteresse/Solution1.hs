@@ -2,8 +2,6 @@ module Solution1 where
 
 import MenuTypes
 
--- | Shows inner functions, boolean clauses in list comprehensions
--- (translated to a call to filter) and infinite lists.
 solution1 :: Menu -> Money -> Selection
 solution1 menu money =
     head [ sel |
