@@ -1,0 +1,190 @@
+% Résumé des Haskell Weekly News +
+  Programmation concurrente avec ```async```
+% Yves Parès
+% Mardi 25 juin 2013
+
+# Résumé des HWN
+
+## Haskell Weekly News
+
+### Publiées sur la mailing-list **Haskell-Café**
+
+- <http://www.haskell.org/mailman/listinfo/haskell-cafe>
+- Également accessible dans les Google Groups : <https://groups.google.com/forum/#!forum/haskell-cafe>
+
+### Présentent les actualités de la communauté Haskell
+- Nouvelles bibliothèques, mises à jour...
+- Papiers de recherche, articles de blogs
+- Questions/discussions intéressantes sur StackOverflow ou Reddit
+- etc.
+
+## Condensé (*très condensé !*) des dernières HWN
+
+### Par ordre de parution dans les HWN
+
+- Tuto sur les *lenses* de G. Gonzalez (<http://www.haskellforall.com/2013/05/program-imperatively-using-haskell.html>, blog à suivre)
+- "The Pragmatic Haskeller" : série de tutos (sur School of Haskell) de A. Dinapoli, <https://www.fpcomplete.com/user/adinapoli/the-pragmatic-haskeller> (MongoDB, Web avec Snap et http-conduit/aeson, construction et parsing de DSL, etc.)
+- ```HLearn``` (tutos + article de recherche détaillé)
+- ```MFlow``` (présentation)
+
+## Lenses
+
+### Framework générique de manipulation de structures/collections de données
+
+> - Principe général, plusieurs implantations (```lens```, ```data-lens```, ```fclabels```...)
+> - La plus avancée (et donc la plus complexe) : ```lens``` (de E. Kmett)
+> - Idée générale :
+    - unifier les accès aux différents types
+    - réifier les accesseurs (=> getters/setters de première classe)
+    - combiner des accesseurs
+    - utiliser fonctions type map/fold/traverse paramétrées par un accesseur
+> - Donne quelque chose de très puissant, sûrement futur "standard"...
+> - ...mais chaud à comprendre, blindé d'abstractions en tout genre, documentation qui donne pas du tout envie...
+> - ...mais en fait, avec un tuto pratique ça passe très bien : <http://www.haskellforall.com/2013/05/program-imperatively-using-haskell.html>
+
+## ```lens``` : petit exemple simpliste
+
+```haskell
+trucs = [("Lampe de chevet",
+            [(45, 4), (39, 3), (43.5, 4)])
+        ,("Bureau classique en bois",
+            [(134, 3), (150, 4), (170, 5)])
+        ,("Table à manger", [(90, 2), (110, 3), (120, 4)])]
+-- ^ Collection de (objets, [(prix, note)])
+
+tous_les_prix = traversed . _2 . traversed . _1
+
+trucs_en_promo = over tous_les_prix (* 0.75) trucs
+
+moyenne_prix =
+    sumOf tous_les_prix trucs /
+        fromIntegral (lengthOf tous_les_prix trucs)
+```
+
+## ```HLearn``` : machine learning en Haskell (M. Izbicki)
+
+- Fournit abstractions pour apprendre/interroger distributions statistiques et modèles de ML (réseaux bayésiens, perceptrons, réseaux de Markov...)
+- Voir le tuto <http://izbicki.me/blog/the-categorical-distributions-algebraic-structure>
+- Récent, donc seulement en partie sur <http://hackage.haskell.org>, et API pas encore stabilisée
+- Intérêt : créer distributions et modèles qui suivent abstractions algébriques
+
+## ```HLearn``` : machine learning en Haskell (M. Izbicki)
+
+- Avantages :
+    - facile de manipuler/combiner/soustraire des distributions (utile pour *cross-validation*)
+    - unifie l'apprentissage *hors ligne* et *en ligne*
+    - parallélisation immédiate de l'apprentissage
+    - un seul framework (simple et facilement extensible) pour diverses techniques de ML
+- Article détaillé : <http://jmlr.org/proceedings/papers/v28/izbicki13.pdf> (M. Izbicki, *International Conference of Machine Learning 2013*)
+
+## ```MFlow```
+
+### Exemple de code très, très bidon :
+
+```haskell
+sum_it = do
+  let get msg = do putStrLn msg
+                   read <$> getLine
+  x <- get "Donne-moi un nombre :"
+  y <- get "Maintenant un autre :"
+  putStrLn $ "La somme est " ++ show (x+y)
+```
+
+## ```MFlow```
+
+### La même chose, avec une interface web, avec ```MFlow``` :
+
+```haskell
+sum_it = do
+  let get msg = ask $     p (msg :: Html)
+                      ++> getInt Nothing
+                      <** submitButton "Voila"
+  x <- get "Donne-moi un nombre :"
+  y <- get "Maintenant un autre :"
+  ask $     p (toHtml $ "Resultat : " ++ show (x+y))
+        ++> wlink () "Recommencer"
+```
+\pause{}
+\center{\includegraphics[width=3cm]{not-bad.png}}
+
+## ```MFlow```
+
+- Permet de composer des éléments de formulaires pour en créer de plus gros ("formlets" dans le jargon Haskell/Web)
+- Un formlet gère génération HTML, validation (Javascript) et récupération des infos (HTTP GET ou POST)
+- ```MFlow``` fournit formlets génériques : marchent avec divers backends génération code HTML (```blaze-html``` (Yesod), ```xhtml```, ```hsp```...)
+- Gère sessions (& persistence) de manière transparente
+- Utilise l'API ```wai``` (Web Application Interface) et le serveur ```warp``` (Yesod)
+- Pour plus d'infos, voir <http://haskell-web.blogspot.fr>
+
+# Programmation concurrente en Haskell
+
+## Les bases de chez bases
+
+- Importer le module ```Control.Concurrent```
+\pause{}
+- Utiliser la fonction ```forkIO``` :
+
+```haskell
+forkIO :: IO () -> IO ()
+```
+\pause{}
+
+- C'est tout.
+
+\pause{}
+
+- Communication inter-threads : MVars (références autolockées)
+- ```async``` simplifie certains patterns d'utilisation des threads ("résultats" des threads, relancement d'exceptions d'un thread à l'autre, etc.)
+
+## Exemple (non concurrent)
+
+```haskell
+import Data.Functor
+
+compter_mots f = do
+    str <- readFile f  -- Je sais, j'ai dit "pas de lazy I/O"
+                       -- mais vous voulez vraiment que vous
+                       -- ressorte _conduit_ ?
+    return $! length $ words str
+
+moyenne = uncurry (/) . foldl (\i (s,t) -> (s+i, t+1)) (0,0)
+main = do
+    let fichiers = ["f1.txt", "f2.txt", "f3.txt"]
+    moy <- moyenne . map fromIntegral <$>
+             mapM compter_mots fichiers
+    putStrLn $ "La moyenne est de " ++ show moy ++ " mots"
+```
+
+## Idem avec ```async```
+
+```haskell
+import Control.Concurrent.Async
+import Data.Functor
+
+compter_mots f = do
+    str <- readFile f  -- Je sais, j'ai dit "pas de lazy I/O"
+                       -- mais vous voulez vraiment que vous
+                       -- ressorte _conduit_ ?
+    return $! length $ words str
+
+moyenne = uncurry (/) . foldl (\(s,t) i -> (s+i, t+1)) (0,0)
+main = do
+    let fichiers = ["f1.txt", "f2.txt", "f3.txt"]
+    moy <- moyenne . map fromIntegral <$>
+             mapConcurrently compter_mots fichiers
+    putStrLn $ "La moyenne est de " ++ show moy ++ " mots"
+```
+
+## Type de base de ```async```
+
+- ```mapConcurrently``` est seulement un helper de haut niveau
+- Type de base : ```Async```
+- Un ```Async t``` = un ```t``` en train d'être calculé ("future")
+- Un ```Async t``` = un thread dont résultat final est un ```t```
+- Au lieu de ```forkIO``` :
+
+```haskell
+async :: IO a    -> Async a
+wait ::  Async a -> IO a
+```
+
